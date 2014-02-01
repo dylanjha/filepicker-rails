@@ -1,5 +1,3 @@
-require_relative 'option_parser'
-
 module FilepickerRails
 
   module ApplicationHelper
@@ -9,12 +7,32 @@ module FilepickerRails
     end
 
     def filepicker_save_button(text, url, mimetype, options = {})
-      options = OptionParser.set_data_options(url, mimetype, options)
+      options[:data] ||= {}
+      container = options.delete(:container)
+      services = options.delete(:services)
+      save_as = options.delete(:save_as_name)
+
+      options[:data]['fp-url'] = url
+      options[:data]['fp-apikey'] = ::Rails.application.config.filepicker_rails.api_key
+      options[:data]['fp-mimetype'] = mimetype
+      options[:data]['fp-option-container'] = container if container
+      options[:data]['fp-option-services'] = Array(services).join(",") if services
+      options[:data]['fp-option-defaultSaveasName'] = save_as if save_as
       button_tag(text, options)
     end
 
     def filepicker_link(url, mimetype, options = {}, &block)
-      options = OptionParser.set_data_options(url, mimetype, options)
+      options[:data] ||= {}
+      container = options.delete(:container)
+      services = options.delete(:services)
+      save_as = options.delete(:save_as_name)
+
+      options[:data]['fp-url'] = url
+      options[:data]['fp-apikey'] = ::Rails.application.config.filepicker_rails.api_key
+      options[:data]['fp-mimetype'] = mimetype
+      options[:data]['fp-option-container'] = container if container
+      options[:data]['fp-option-services'] = Array(services).join(",") if services
+      options[:data]['fp-option-defaultSaveasName'] = save_as if save_as
       link_to(url, options) do
         capture(&block)
       end
